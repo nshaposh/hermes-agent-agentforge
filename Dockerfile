@@ -17,7 +17,7 @@ RUN apt-get update && \
 
 # Non-root user for runtime; UID can be overridden via HERMES_UID at runtime
 RUN useradd -u 10000 -m -d /opt/data hermes
-RUN mkdir -p /opt/data && chown -R hermes:hermes /opt/data
+#RUN mkdir -p /opt/data && chown -R hermes:hermes /opt/data
 
 
 COPY --chmod=0755 --from=gosu_source /gosu /usr/local/bin/
@@ -47,13 +47,13 @@ RUN cd web && npm run build
 
 # ---------- Python virtualenv ----------
 RUN chown hermes:hermes /opt/hermes
-RUN chown hermes:hermes /opt/data
+#RUN chown hermes:hermes /opt/data
 USER hermes
 RUN uv venv && \
     uv pip install --no-cache-dir -e ".[all]"
 
 # ---------- Runtime ----------
 ENV HERMES_WEB_DIST=/opt/hermes/hermes_cli/web_dist
-ENV HERMES_HOME=/opt/data
-#VOLUME [ "/opt/data" ]
+#ENV HERMES_HOME=/opt/data
+VOLUME [ "/opt/data" ]
 ENTRYPOINT [ "/opt/hermes/docker/entrypoint.sh" ]
